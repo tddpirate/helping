@@ -1,0 +1,42 @@
+
+{
+    "User_name" : "Honest Abe",
+    "user_id" : "0",
+    "User_type":"needy",
+    "Connection_details":{
+        "Phone": "000-000-000000000",
+        "Mail": "never@real.mail.demo"
+    },
+    "Tags_list":[ 
+        {
+            "Description": "יועץ כלכלי",
+            "Need_lang": true,
+            "Need_location": false,
+            "Need_country": true,
+            "More_details":null
+        },        
+        {
+            "Description": "עזרה פיזית",
+            "Need_lang": true,
+            "Need_location": true,
+            "Need_country": true,
+            "More_details":null
+        },        
+        {
+            "Description": "משלוח חד פעמי",
+            "Need_lang": false,
+            "Need_location": true,
+            "Need_country": true,
+            "More_details":{
+                "כתובת יעד": "הפלדה 22, קרית הממשלה"
+            }
+        }
+    ],
+    "Languages":[ "hebrew", "russian" ],
+    "Location_details": {
+        "City":"נהריה",
+        "Neighborhood" : "תל אכזיב",
+        "Country": "IL"
+    }
+
+}

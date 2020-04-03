@@ -1,0 +1,32 @@
+
+[
+    {
+        "User_name": "בית מאפה נומילי",
+        "Location_details": {
+            "City":"הוד השרון",
+            "Neighbor" : "הבנים",
+            "Country": "IL"
+        },
+        "Compatible_tags": [ 
+        {
+            "Description": "ניהול כלכלי",
+        "More_details":null
+        }
+     ]        
+    },
+    {
+        "User_name": "שווארמת החתוליה",
+        "Location_details": {
+            "City":"תל אביב",
+            "Neighbor" : "עתידים",
+            "Country": "IL"
+        },
+        "Compatible_tags": [ 
+        {
+            "Description": "שווח באינטרנט",
+        "More_details":null
+        }
+     ]        
+    }
+    
+]

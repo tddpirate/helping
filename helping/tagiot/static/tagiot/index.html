@@ -1,0 +1,546 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf8">
+        <title> Hackorona </title>
+        
+        <style type="text/css">
+            /*body { background-image:url("bg-logo.png"); }*/
+            div.visible { display:block; }
+            div.hidden{ display:none; }
+            div.divCenter {position:absolute; top:0px; text-align:center; width:100%;}
+            button.currentTab { font-weight:bold; }
+        </style>
+        
+        <script type="text/javascript">
+            "use strict";
+            
+            
+            // Tranlation handler 
+            
+            function I18N () {
+                this.lang = "EN"
+                var _this = this;
+                var GetText = this.GetText = function (text) {
+                    var lang = _this.lang;
+                    if (!TransStr[lang]) {
+                        lang = "EN";
+                    }
+                    if (!TransStr[lang][text]) {
+                        divDebug.innerHTML += '"'+text+'":"'+text+'",<br>';
+                        TransStr[lang][text] = text;
+                    }
+                    return TransStr[lang][text];
+                    //return text;
+                }
+                
+                this.Trans = function (obj_id) {
+                    var rootObj = document.getElementById(obj_id);
+                    var objToTrans = rootObj.getElementsByClassName("ca_trans");
+                    for (var i=0; i < objToTrans.length; i++) {
+                        objToTrans[i].innerHTML = GetText(objToTrans[i].innerHTML);
+                    }
+                }
+                
+            var TransStr = {
+                "HE":{
+                    " Hello ": " שלום ",
+                    " Edit user details ":" ערוך פרטי משתמש ",
+                    " Show Match ":" הצג התאמות ",
+                    "Edit user details":" ערוך פרטי משתמש ",
+                    "User name:":"שם המשתמש:",                
+                    "User ID:":"מזהה משתמש:",                
+                    "User type:":"סוג המשתמש:",
+                    "needy":"נצרך (בעל עסק)",
+                    "helper":"מסייע",
+                    "-":"-",
+                    "Tag List:":"רשימת תגיות:",
+                    "languages":"שפות",
+                    "Connection details":"פרטי קשר",
+                    "Phone:":"טלפון:",
+                    "email:":"דואל:",
+                    "Address":"כתובת",
+                    "City:":"עיר:",
+                    "Neighborhood:":"שכונה:",
+                    "Country:":"מדינה:",
+                    "Save":"שמור",
+                    "Description":"תיאור",
+                    "Check Contact":"סמן התאמה",
+                    "Tags":"תגיות",
+                    "rtl":"rtl",
+                    " Show Matches ":" הצג התאמות ",
+                    " Acknoledge Mathces ":" אשר התאמות ",
+                    " Matches ":" התאמות "                
+                },
+                "EN":{
+                    " Hello ":" Hello ",
+                    " Edit user details ":" Edit user details ",
+                    " Show Match ":" Show Match ",
+                    "Edit user details":"Edit user details",
+                    " Matches ":" Matches ",
+                    "User name:":"User name:",
+                    "User ID:":"User ID:",
+                    "User type:":"User type:",
+                    "-":"-",
+                    "needy":"needy",
+                    "helper":"helper",
+                    "Tag List:":"Tag List:",
+                    "languages":"languages",
+                    "Connection details":"Connection details",
+                    "Phone:":"Phone:",
+                    "email:":"email:",
+                    "Address":"Address",
+                    "City:":"City:",
+                    "Neighborhood:":"Neighborhood:",
+                    "Country:":"Country:",
+                    "Save":"Save",
+                    "Description":"Description",
+                    "Tags":"Tags",
+                    "rtl":"ltr",
+                    " Show Matches ":" Show Matches ",
+                    " Acknoledge Mathces ":" Acknoledge Mathces ",
+                    "Check Contact":"Check Contact"
+                }
+            };
+            
+
+            }
+            
+        </script>
+        
+        <script type="text/javascript">
+            "use strict";
+            
+            var i18n = new I18N();
+            
+            var lang_list = [
+                "hebrew",
+                "english",
+                "russian",
+                "arabic"
+            ];
+            
+            //replace with right access points
+            var accessPoints = {
+                "who_am_i" : "who_am_i.json",
+                "get_tags_list":"get_tags_list.json",
+                "saveUser": "saveUser.json",
+                "get_matches":"matches.json"
+            }
+            
+            var user_details = null;
+            var tags_list = null;
+            var matches = null;
+            
+            function Init() {
+            
+                /* next will set language and translation.  maybe good idea to run it after we know who is the user */
+                i18n.lang = "EN"; // English
+                // i18n.lang = "HE"; // Hebrew
+                rootContainer.dir = i18n.GetText("rtl");
+                i18n.Trans ("body");
+                
+                
+                divEditUserDetails.appendChild (new I_Am());
+                HandleTags();
+            }
+            
+            // ----------------------------------------------------------------------------
+            //utilities 
+            
+            //HTTP handler
+            function HTTPhandler ( OnSucess, OnFail ) {
+                var _http_request = null;
+                var _OnSucess = this._OnSucess = OnSucess;
+                var _onfail = this._OnFail = OnFail;
+                _http_request = new XMLHttpRequest();  //No need support old explorer version - fuck it.
+                var HandleAnswer = function() {
+                    if (_http_request.readyState == 4) {
+                        if (_http_request.status == 200) {
+                            if (_OnSucess) {
+                                _OnSucess(_http_request.responseText);
+                            }
+                        } else {
+                            if (_onfail) {
+                                _onfail(_http_request.responseText);
+                            }
+                        } 
+                    }
+                    
+                }
+                _http_request.onreadystatechange = HandleAnswer;
+                var send = this.Send = function(url, data) {
+                    var postVars = null;
+                    postVars = JSON.stringify(data);
+
+                    _http_request.open("POST", url, true);
+                    _http_request.setRequestHeader("Content-type", "application/json");
+                    _http_request.send('data=' + postVars);
+                };
+                
+            }
+            
+            // ----------------------------------------------------------------------------
+            //data handlers
+
+            // next functions requests data and returns div
+            function I_Am() {
+                var _this = this;
+                
+                var bgDiv = _this.bgDiv = document.createElement("div");
+                bgDiv.controller = _this; 
+                bgDiv.innerHTML = "Please wait ... "
+                
+                
+                // OMER handling to who_am_i
+                function GotData( data ) {
+                
+                    var input = null;
+                    var span = null;
+                    var selectType = null;
+                    var option = null;
+                    var option_list = ["-", "needy" , "helper"];
+                    var ul = null;
+                    var li = null;
+                    var checkbox = null;
+                    var i = 0;
+                    var btnSave = null;
+                
+                    user_details = JSON.parse (data)
+                    field_user_name.innerHTML = user_details.User_name;
+                    bgDiv.innerHTML = "";
+                    
+                    span = bgDiv.appendChild(document.createElement("span"));
+                    span.innerHTML = i18n.GetText("User name:") + user_details.User_name;
+                    bgDiv.appendChild(document.createElement("br"));
+                    span = bgDiv.appendChild(document.createElement("span"));
+                    span.innerHTML = i18n.GetText("User ID:") + user_details.user_id;
+                    bgDiv.appendChild(document.createElement("br"));
+
+                    span = bgDiv.appendChild(document.createElement("span"));
+                    span.innerHTML = i18n.GetText("User type:" );
+                    selectType = span.appendChild(document.createElement("select"));
+                    option = null;
+                    for (i=0; i < option_list.length; i++) {
+                        option = selectType.appendChild(document.createElement("option"));
+                        option.value = option_list[i];
+                        option.innerHTML = i18n.GetText(option_list[i]);
+                        if (user_details.User_type == option_list[i]) {
+                            selectType.selectedIndex = i;
+                        }                        
+                    }
+                    
+                    selectType.onclick = function() {
+                        user_details.User_type = selectType.value;
+                    }
+                    
+                    bgDiv.appendChild(document.createElement("br"));
+                    span = bgDiv.appendChild(document.createElement("span"));
+                    span.innerHTML = i18n.GetText("Tag List:");
+                    ul = span.appendChild( document.createElement("ul"));
+                    ul.id = "ulUserTags";
+                    PopulateUserTags();
+                    
+                    //bgDiv.appendChild(document.createElement("br"));
+                    span = bgDiv.appendChild(document.createElement("span"));
+                    span.innerHTML = i18n.GetText("languages");
+                    ul = bgDiv.appendChild(document.createElement("ul"));
+                    li = null;
+                    checkbox = null;
+                    for (i=0; i < lang_list.length; i++) {
+                        li = ul.appendChild( document.createElement("li"));
+                        li.innerHTML = lang_list[i];
+                        (checkbox = li.appendChild(document.createElement("input"))).type="checkbox";
+                        checkbox.value = lang_list[i];
+                        if (user_details.Languages.includes (lang_list[i])) {
+                            checkbox.checked = true;
+                        }
+                        checkbox.onclick = function () {
+                            if (this.checked) { //we need to add
+                                user_details.Languages.push (this.value);
+                            } else { // we need to remove.  very short array ... 
+                                var newLangArray = [];
+                                for (var i=0; i < user_details.Languages.length; i++) {
+                                    if (user_details.Languages[i] != this.value) {
+                                        newLangArray.push (user_details.Languages[i]);
+                                    }
+                                }
+                                user_details.Languages = newLangArray;
+                            }                            
+                        }
+                    }
+                    
+                    //bgDiv.appendChild(document.createElement("br"));
+                    bgDiv.appendChild(document.createElement("h3")).innerHTML = i18n.GetText("Connection details");
+                    
+                    span = bgDiv.appendChild(document.createElement("span"));
+                    span.innerHTML = i18n.GetText("Phone:");
+                    input = span.appendChild(document.createElement("input"));
+                    input.value = user_details.Connection_details.Phone;
+                    input.onchange = function () {
+                        user_details.Connection_details.Phone = this.value;
+                    }
+                    bgDiv.appendChild(document.createElement("br"));
+                    
+                    span = bgDiv.appendChild(document.createElement("span"));
+                    span.innerHTML = i18n.GetText("email:");
+                    input = span.appendChild(document.createElement("input"));
+                    input.value = user_details.Connection_details.Mail;
+                    input.onchange = function () {
+                        user_details.Connection_details.Mail = this.value;
+                    }
+                    bgDiv.appendChild(document.createElement("br"));
+                    
+                    
+                    bgDiv.appendChild(document.createElement("h3")).innerHTML = i18n.GetText("Address");
+
+                    span = bgDiv.appendChild(document.createElement("span"));
+                    span.innerHTML = i18n.GetText("City:");
+                    input = span.appendChild(document.createElement("input"));
+                    input.value = user_details.Location_details.City;
+                    input.onchange = function () {
+                        user_details.Connection_details.City = this.value;
+                    }
+                    
+                    bgDiv.appendChild(document.createElement("br"));
+                    span = bgDiv.appendChild(document.createElement("span"));
+                    bgDiv.appendChild(document.createElement("br"));
+                    span.innerHTML = i18n.GetText("Neighborhood:");
+                    input = span.appendChild(document.createElement("input"));
+                    input.value = user_details.Location_details.Neighborhood;
+                    input.onchange = function () {
+                        user_details.Connection_details.Neighborhood = this.value;
+                    }
+                    
+                    span = bgDiv.appendChild(document.createElement("span"));
+                    span.innerHTML = i18n.GetText("Country:");
+                    input = span.appendChild(document.createElement("input"));
+                    input.value = user_details.Location_details.Country;
+                    input.onchange = function () {
+                        user_details.Connection_details.Country = this.value;
+                    }
+                    
+                    bgDiv.appendChild(document.createElement("br"));
+                    
+                    btnSave = bgDiv.appendChild(document.createElement("button"));
+                    btnSave.innerHTML = i18n.GetText("Save");
+                    btnSave.onclick = function() {
+                        //debug first
+                        //divDebug.innerHTML = "<pre>" + JSON.stringify(user_details, false, 4) + "</pre>";
+                        
+                        // OMER calling to accessPoints.saveUser
+                        new HTTPhandler(null, null).Send (accessPoints.saveUser, user_details);
+                    }
+                    
+                    divMatches.appendChild (new HandleMatches());
+
+                    //DEBUG - remove later
+                    var sDiv = bgDiv.appendChild(document.createElement("div"));
+                    //sDiv.innerHTML = "<hr>Have Data!" + "<pre dir='ltr'>" + data + "</pre>"+ "<hr>";  
+                    
+                }
+                
+                function FailData(data) {
+                    bgDiv.innerHTML = "Bad data request !" + "<pre>" + data + "</pre>";
+                }
+                
+                // OMER calling to accessPoints.who_am_i
+                new HTTPhandler(GotData, FailData).Send (accessPoints.who_am_i, null);
+                
+                return bgDiv;
+            }
+
+            
+            
+            // Get tag list 
+            function HandleTags() {
+            
+                function FailData(data) {
+                    divDebug.innerHTML = "FAIL!" + data;
+                }
+                
+                // OMER handling to get_tags_list
+                function GotData(data) {
+                    tags_list = JSON.parse (data);
+                    PopulateUserTags();
+                }
+            
+                // OMER calling to accessPoints.get_tags_list
+                new HTTPhandler(GotData, FailData).Send (accessPoints.get_tags_list, null);
+                
+            }
+            
+            function HandleMatches() {
+                var bgDiv = document.createElement("div");
+                var i;
+                function FailData(data) {
+                    var textarea = bgDiv.appendChild(document.createElement("textarea"));
+                    textarea.innerHTML = "FAIL!" + data;
+                }
+                    
+                // Omer handling to get_matches
+                function GotData(data) {
+                    matches = JSON.parse (data);
+                    var tempString = "";
+                    var table = bgDiv.appendChild(document.createElement("table"));
+                    var input = null;
+                    table.border="1";
+                    var thead = table.appendChild(document.createElement("thead"));
+                    var tbody = table.appendChild(document.createElement("tbody"));
+                    var tr = thead.appendChild(document.createElement("tr"));
+                    tr.appendChild(document.createElement("th")).innerHTML = "#";
+                    tr.appendChild(document.createElement("th")).innerHTML = i18n.GetText("Description");
+                    tr.appendChild(document.createElement("th")).innerHTML = i18n.GetText("Tags");
+                    tr.appendChild(document.createElement("th")).innerHTML = i18n.GetText("Check Contact");
+                    
+                    for (var i=0; i < matches.length; i++) {
+                        tr = thead.appendChild(document.createElement("tr"));
+                        tr.appendChild(document.createElement("th")).innerHTML = (i+1);
+                        tr.appendChild(document.createElement("td")).innerHTML = matches[i].User_name;
+                        tempString = "";
+                        for (var j = 0; j < matches[i].Compatible_tags.length ; j++) {
+                            tempString += matches[i].Compatible_tags[j].Description + " , ";
+                        }
+                        tr.appendChild(document.createElement("td")).innerHTML = tempString;
+                        input = (tr.appendChild(document.createElement("th"))).appendChild(document.createElement("input"));
+                        input.type = "checkbox";
+                        input.value = matches[i].User_name;
+                        input.onclick = function() {
+                            //ADD CODE HERE!
+                        }
+                    }
+                    
+                    var button = bgDiv.appendChild(document.createElement("button"));
+                    button.innerHTML = i18n.GetText("Save");
+                    button.onclick = function () {
+                        //ADD CODE HERE!
+                    }
+                    //var textarea = bgDiv.appendChild(document.createElement("textarea"));
+                    //textarea.dir = "ltr";
+                    //textarea.innerHTML = "OK!" + data;
+                }
+                
+                var params = {};
+                /*
+
+{
+    User_id: string
+    Tags:  [ 
+        string 
+    ]
+}
+                
+                */
+                params.User_id = user_details.user_id;
+                params.Tags = [];
+                for (i=0; i < user_details.Tags_list.length; i++) {
+                    params.Tags.push (user_details.Tags_list[i].Description);
+                }
+                
+                // OMER calling to accessPoints.get_matches
+                new HTTPhandler(GotData, FailData).Send (accessPoints.get_matches, params);
+                
+                return bgDiv;
+            }
+            
+            //update users tags 
+            function PopulateUserTags() {
+            
+                if (!user_details) {
+                    return ;
+                }
+                if (!tags_list) {
+                    return ;
+                }
+                var ul = document.getElementById("ulUserTags");
+                var li;
+                var checkbox;
+                var i = 0;
+                var j = 0;
+                if (tags_list) {
+                    for (i=0; i < tags_list.length; i++) {
+                        li = ul.appendChild(document.createElement("li"));
+                        li.innerHTML = tags_list[i].Description;
+                        
+                        (checkbox = li.appendChild(document.createElement("input"))).type = "checkbox";
+                        checkbox.value = tags_list[i].Description;
+                        for (j = 0; j < user_details.Tags_list.length; j++) {
+                            if (user_details.Tags_list[j].Description == tags_list[i].Description) {
+                                checkbox.checked = true;
+                            }
+                        }
+                        checkbox.onclick = function () {
+                            var i = 0;
+                            if (this.checked) { // add
+                                for (i=0; i < tags_list.length; i++) {
+                                    if (tags_list[i].Description == this.value) {
+                                        user_details.Tags_list.push (tags_list[i]);
+                                        break;
+                                    }
+                                }
+                            } else { // remove 
+                                var new_Array = [];
+                                for (i=0; i < user_details.Tags_list.length; i++) {
+                                    if (user_details.Tags_list[i].Description != this.value) {
+                                        new_Array.push (user_details.Tags_list[i]);
+                                    }
+                                }
+                                user_details.Tags_list = new_Array;                                
+                            }
+                        }
+                        
+                    }
+                }                
+            }
+            
+        </script>
+        
+        <script type="text/javascript">
+            //user interface management
+            "use strict";
+            
+            var currentVisible = null;
+            var currentButton = null;
+            function Show(item_id, button_id) {
+                if (currentVisible) {
+                    currentVisible.classList.remove ("visible");
+                    currentVisible.classList.add ("hidden");
+                }
+                if (currentButton) {
+                    currentButton.classList.remove ("currentTab")
+                }
+                var item = document.getElementById(item_id);
+                currentVisible = item;
+                console.log (this);
+                currentButton = document.getElementById(button_id);;
+                
+                currentButton.classList.add ("currentTab")
+                currentVisible.classList.add ("visible");
+                currentVisible.classList.remove ("hidden");
+            }
+            
+        </script>
+        
+    </head>
+    <body onload="Init();" id="body">
+        <!--div class="divCenter"><img src="logo-h.png"></div -->
+        
+        <div id="rootContainer">
+            <span class="ca_trans"> Hello </span>        
+            <span id="field_user_name"></span>
+            <br>
+            <button onclick="Show('divEditUserDetails', 'btnEditUserDetails' );" class="ca_trans" id="btnEditUserDetails"> Edit user details </button>
+            <button onclick="Show('divMatches', 'btnMatches');" class="ca_trans" id="btnMatches"> Show Matches </button>
+
+            <button onclick="Show('divAckMatches', 'btnAckMatches');" class="ca_trans" id="btnAckMatches"> Acknoledge Mathces </button>
+            <!-- button onclick="Show('divMatches');" class=ca_trans> Acknoledge Mathces </button -->
+            
+            
+            <div id="divEditUserDetails" class="hidden"> <h1 class=ca_trans>Edit user details</h1> </div>
+            <div id="divMatches" class="hidden"> <h1 class=ca_trans> Matches </h1> </div>
+            <div id="divAckMatches" class="hidden"> <h1 class=ca_trans> Acknoledge Mathces </h1> </div>
+            <hr>
+        </div>
+        <div id="divDebug"></div>
+    </body>
+</html>

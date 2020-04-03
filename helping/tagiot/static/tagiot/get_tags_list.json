@@ -1,0 +1,81 @@
+[ 
+        {
+            "Description": "יועץ כלכלי",
+            "Need_lang": true,
+            "Need_location": false,
+            "Need_country": true,
+            "More_details":null
+        },
+        {
+            "Description": "עזרה פיזית",
+            "Need_lang": true,
+            "Need_location": true,
+            "Need_country": true,
+            "More_details":null
+        },        
+        {
+            "Description": "משלוח חד פעמי",
+            "Need_lang": false,
+            "Need_location": true,
+            "Need_country": true,
+            "More_details":{
+                "כתובת יעד": "הפלדה 22, קרית הממשלה"
+            }
+        },
+        {
+            "Description": "שליח",
+            "Need_lang": false,
+            "Need_location": true,
+            "Need_country": true,
+            "More_details":null
+        },
+        {
+            "Description": "עיצוב וגרפיקה",
+            "Need_lang": false,
+            "Need_location": false,
+            "Need_country": false,
+            "More_details":null
+        },
+        {
+            "Description": "בניית אתרים",
+            "Need_lang": false,
+            "Need_location": false,
+            "Need_country": false,
+            "More_details":null
+        },
+        {
+            "Description": "פיתוח אתרים",
+            "Need_lang": false,
+            "Need_location": false,
+            "Need_country": false,
+            "More_details":null
+        },
+        {
+            "Description": "שיווק באינטרנט",
+            "Need_lang": false,
+            "Need_location": true,
+            "Need_country": true,
+            "More_details":null
+        },
+        {
+            "Description": "פיתוח עסקי",
+            "Need_lang": false,
+            "Need_location": false,
+            "Need_country": false,
+            "More_details":null
+        },
+        {
+            "Description": "מכירות",
+            "Need_lang": false,
+            "Need_location": false,
+            "Need_country": false,
+            "More_details":null
+        },
+        {
+            "Description": "פיננסיים",
+            "Need_lang": false,
+            "Need_location": false,
+            "Need_country": false,
+            "More_details":null
+        }
+    ]
