@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 import graphene
 from graphene_django.types import DjangoObjectType
 
@@ -17,13 +17,25 @@ class ProfileStatusType(DjangoObjectType):
     class Meta:
         model = ProfileStatus
 
-class UserType(DjangoObjectType):
-    class Meta:
-        model = User
+#class UserType(DjangoObjectType):
+#    class Meta:
+#        model = User
 
 class ProfileType(DjangoObjectType):
     class Meta:
         model = Profile
+    user_first_name = graphene.String()
+    user_last_name = graphene.String()
+    user_username = graphene.String()
+    user_email = graphene.String()
+    def resolve_user_first_name(parent, info):
+        return parent.get_user_first_name()
+    def resolve_user_last_name(parent, info):
+        return parent.get_user_last_name()
+    def resolve_user_username(parent, info):
+        return parent.get_user_username()
+    def resolve_user_email(parent, info):
+        return parent.get_user_email()
 
 ####################################
 
@@ -89,8 +101,8 @@ class Task1Type(DjangoObjectType):
 class Query(object):
     profilestatus = graphene.Field(ProfileStatusType, status=graphene.String())
     all_profilestatuss = graphene.List(ProfileStatusType)
-    user = graphene.Field(UserType, id=graphene.Int())
-    all_users = graphene.List(UserType)
+    #user = graphene.Field(UserType, id=graphene.Int())
+    #all_users = graphene.List(UserType)
     profile = graphene.Field(ProfileType, id_member=graphene.Int())
     all_profiles = graphene.List(ProfileType)
 
@@ -129,11 +141,11 @@ class Query(object):
         return ProfileStatus.objects.get(status=status) if status else None
     def resolve_all_profilestatuss(self, info, **kwargs):
         return ProfileStatus.objects.all()
-    def resolve_user(self, info, **kwargs):
-        id = kwargs.get('id')
-        return User.objects.get(pk=id) if id else None
-    def resolve_all_users(self, info, **kwargs):
-        return User.objects.all()
+    #def resolve_user(self, info, **kwargs):
+    #    id = kwargs.get('id')
+    #    return User.objects.get(pk=id) if id else None
+    #def resolve_all_users(self, info, **kwargs):
+    #    return User.objects.all()
     def resolve_profile(self, info, **kwargs):
         id_member = kwargs.get('id_member')
         return Profile.objects.get(id_member=id_member) if id_member else None
@@ -226,7 +238,6 @@ class ProfileStatusInput(graphene.InputObjectType):
 
 #class ProfileInput(graphene.InputObjectType):
 #    id_member = graphene.ID()
-#    user =
 #    bio = graphene.String()
 #    pstatus = 
 
