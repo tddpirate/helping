@@ -47,7 +47,7 @@ cd helping
 ./manage.py makemigrations
 ./manage.py migrate
 ./manage.py collectstatic
-./manage.py createsuperuser --username admin --email w1@zak.co.il
+./manage.py createsuperuser --username admin
 echo; echo
 echo Finished regenerating files.
 
