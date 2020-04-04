@@ -57,7 +57,7 @@ echo; echo
 cd $MYDIR
 cd helping
 ls -al tagiot/fixtures/*.json
-./manage.py loaddata tagiot/fixtures/*.json
+./manage.py loaddata enumerations tasktypes
 echo; echo
 echo Finished populating database.
 
