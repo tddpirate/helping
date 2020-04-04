@@ -27,11 +27,8 @@ echo Going to clear generated files.
 echo; echo
 cd $MYDIR
 rm ./helping/db.sqlite3
-rm -rv ./helping/tagiot/migrations/__pycache__
+find   ./helping   -name __pycache__ -exec rm -rv {} \;
 rm     ./helping/tagiot/migrations/0*.py
-rm -rv ./helping/tagiot/__pycache__
-rm -rv ./helping/common/__pycache__
-rm -rv ./helping/helping/__pycache__
 rm -rv ./helping/static/*
 echo; echo
 echo Finished clearing generated files.
