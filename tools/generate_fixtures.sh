@@ -27,7 +27,7 @@ echo Going to regenerate fixture files.
 echo; echo
 cd $MYDIR
 cd helping
-./manage.py dumpdata --indent 2 tagiot.ProfileStatus tagiot.ContactType tagiot.NeedStatus tagiot.CapabilityStatus > tagiot/fixtures/enumerations.json
+./manage.py dumpdata --indent 2 tagiot.ProfileStatus tagiot.ContactType tagiot.NeedStatus tagiot.CapabilityStatus tagiot.TaskStatus > tagiot/fixtures/enumerations.json
 ./manage.py dumpdata --indent 2 tagiot.TaskType tagiot.TaskTypeExtra > tagiot/fixtures/tasktypes.json
 echo; echo
 echo Finished regenerating fixture files.

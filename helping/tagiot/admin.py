@@ -5,8 +5,8 @@ from .models import ProfileStatus, Profile
 from .models import ContactType, Contact
 from .models import TaskType, TaskTypeExtra
 from .models import NeedStatus, Need, NeedExtra
-from .models import CapabilityStatus, Capability
-# !!! Import also CapabilityExtra, Task !!! Once they are implemented.
+from .models import CapabilityStatus, Capability, CapabilityExtra
+from .models import TaskStatus, Task
 
 ########################################################################
 ####                      Models Administration                     ####
@@ -33,6 +33,10 @@ class TaskTypeExtraInline(admin.TabularInline):
 
 class NeedExtraInline(admin.TabularInline):
     model = NeedExtra
+    extra = 4
+
+class CapabilityExtraInline(admin.TabularInline):
+    model = CapabilityExtra
     extra = 4
 
 #######################################
@@ -75,11 +79,28 @@ class NeedAdmin(admin.ModelAdmin):
     readonly_fields=('id_need',)
     list_display_links = ['id_need', 'profile', 'tasktype',]
     inlines = [NeedExtraInline,]
-    search_fields = ['=id_need', '^profile', '^tasktype',]
+    search_fields = ['=id_need', '^profile', '^tasktype', '=nstatus']
+
+class CapabilityAdmin(admin.ModelAdmin):
+    list_display = [ 'id_capability',
+                     'profile', 'tasktype', 'details',
+                     'cstatus',
+    ]
+    readonly_fields=('id_capability',)
+    list_display_links = ['id_capability', 'profile', 'tasktype',]
+    inlines = [CapabilityExtraInline,]
+    search_fields = ['=id_capability', '^profile', '^tasktype', '=cstatus']
 
 
-#!!!!!!! Modules needing Admin:  Capability
-
+class TaskAdmin(admin.ModelAdmin):
+    list_display = [ 'id_task',
+                     'need', 'capable',
+                     'tstatus',
+                     'feedback',
+    ]
+    readonly_fields=('id_task',)
+    list_display_links = ['id_task', 'need', 'capable',]
+    search_fields = ['=id_task', '^need', '^capable', '=tstatus']
 
 
 ########################################################################
@@ -92,9 +113,13 @@ for (model, model_admin) in [
         (ContactType, EnumAdmin),
         (NeedStatus, EnumAdmin),
         (CapabilityStatus, EnumAdmin),
+        (TaskStatus, EnumAdmin),
+
         (Profile, ProfileAdmin),
         (TaskType, TaskTypeAdmin),
         (Need, NeedAdmin),
+        (Capability, CapabilityAdmin),
+        (Task, TaskAdmin),
         ]:
     admin.site.register(model, model_admin)
 

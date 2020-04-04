@@ -303,9 +303,80 @@ class Capability(models.Model):
     cstatus = models.ForeignKey(CapabilityStatus, on_delete=models.CASCADE)
     # CapabilityExtra # 1:N relation to information in fields defined in CapabilityExtra
 
-# !!!! class CapabilityExtra
-# !!!! class Task
+    class Meta:
+        ordering = ['id_capability', 'tasktype']
+        indexes = [
+            models.Index(fields=['id_capability', 'profile', 'tasktype']),
+        ]
 
+class CapabilityExtra(models.Model):
+    capability = models.ForeignKey(Capability, on_delete=models.CASCADE)
+    fldname = models.CharField("field name", max_length=32)
+    fldvalue = models.CharField("field value", max_length=32)
+
+    def __str__(self):
+        return F"{self.fldname}={self.fldvalue}"
+
+    class Meta:
+        ordering = ['fldname']
+        indexes = [
+            models.Index(fields=['capability', 'fldname', 'fldvalue']),
+        ]
+
+####################################
+#           Active Tasks           #
+####################################
+
+class TaskStatus(models.Model):
+    status = models.CharField("status", max_length=32, unique=True)
+    # Transitions:
+    # Start with T_C_FLASHED or T_N_FLASHED depending upon who flashed.
+    # Once both confirm, the task is T_MATCHED and presumably being executed.
+    # When it is done (or terminated), the task goes to T_FINISHED state.
+    T_C_FLASHED  = "capableflashed"
+    T_N_FLASHED  = "needyflashed"
+    T_MATCHED    = "matched"       # Now the task is being executed (maybe waiting for them to actually work on it; details will be in 'feedback')
+    T_FINISHED   = "finished"      # The task could be terminated (details will be in 'feedback')
+
+    @classmethod
+    def get_T(cls, status):
+        """T = TaskStatus"""
+        tss = TaskStatus.objects.filter(status=status)
+        if (len(tss) > 0):
+            if (len(tss) > 1):
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error("More than one TaskStatus record with status=%(status)s", {"status": status})
+            ts = tss[0]
+        else:
+            ts = TaskStatus(status=status)
+            ts.save()
+        return ts
+
+    def __str__(self):
+        return self.status
+
+    ##### TaskStatus.Meta #########
+    class Meta:
+        indexes = [
+            models.Index(fields=['status']),
+        ]
+
+class Task(models.Model):
+    id_task = models.AutoField("task id", primary_key=True)
+    need = models.ForeignKey(Need, on_delete=models.CASCADE)
+    capable = models.ForeignKey(Capability, on_delete=models.CASCADE)
+    tstatus = models.ForeignKey(TaskStatus, on_delete=models.CASCADE)
+    feedback = models.TextField(max_length=2000, blank=True)
+
+    def __str__(self):
+        return F"{self.need.profile.user.username}:{self.capability.profile.user.username}---{self.capability.tasktype}"
+
+    class Meta:
+        ordering = ['id_task', 'tstatus',]
+        indexes = [
+            models.Index(fields=['id_task', 'need', 'capable', 'tstatus',]),
+        ]
 
 ########################################################################
 # End of tagiot/models.py
