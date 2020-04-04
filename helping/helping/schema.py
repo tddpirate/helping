@@ -6,6 +6,9 @@ import tagiot.schema
 class Query(tagiot.schema.Query, graphene.ObjectType):
     pass
 
-schema = graphene.Schema(query=Query)
+class Mutation(tagiot.schema.Mutation, graphene.ObjectType):
+    pass
+
+schema = graphene.Schema(query=Query, mutation=Mutation)
 
 # End of ./schema.py

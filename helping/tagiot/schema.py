@@ -10,6 +10,8 @@ from .models import CapabilityStatus, Capability
 # !!! Import also CapabilityExtra, Task !!! Once they are implemented.
 
 ########################################################################
+###                             Queries                              ###
+########################################################################
 
 class ProfileStatusType(DjangoObjectType):
     class Meta:
@@ -178,5 +180,61 @@ class Query(object):
 #        return .objects.all()
 #    def resolve_all_(self, info, **kwargs):
 #        return .objects.all()
+
+########################################################################
+###                            Mutations                             ###
+########################################################################
+
+class ProfileStatusInput(graphene.InputObjectType):
+    id = graphene.ID()
+    status = graphene.String()
+
+#class ProfileInput(graphene.InputObjectType):
+#    id_member = graphene.ID()
+#    user =
+#    bio = graphene.String()
+#    pstatus = 
+
+####################################
+
+class CreateProfileStatus(graphene.Mutation):
+    class Arguments:
+        input = ProfileStatusInput(required=True)
+
+    ok = graphene.Boolean()
+    profilestatus = graphene.Field(ProfileStatusType)
+
+    @staticmethod
+    def mutate(root, info, input=None):
+        ok = True
+        profilestatus_instance = ProfileStatus(status=input.status)
+        profilestatus_instance.save()
+        return CreateProfileStatus(ok=ok, profilestatus=profilestatus_instance)
+
+class UpdateProfileStatus(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int(required=True)
+        input = ProfileStatusInput(required=True)
+
+    ok = graphene.Boolean()
+    profilestatus = graphene.Field(ProfileStatusType)
+
+    @staticmethod
+    def mutate(root, info, id, input=None):
+        ok = False
+        profilestatus_instance = ProfileStatus.objects.get(pk=id)
+        if profilestatus_instance:
+            ok = True
+            profilestatus_instance.name = input.name
+            profilestatus_instance.save()
+            return UpdateProfileStatus(ok=ok, profilestatus=profilestatus_instance)
+        return UpdateProfileStatus(ok=ok, profilestatus=None)
+
+########################################################################
+
+class Mutation(object):
+    create_profilestatus = CreateProfileStatus.Field()
+    update_profilestatus = UpdateProfileStatus.Field()
+
 
 # End of tagiot/schema.py
