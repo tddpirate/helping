@@ -6,8 +6,8 @@ from .models import ProfileStatus, Profile
 from .models import ContactType, Contact
 from .models import TaskType, TaskTypeExtra
 from .models import NeedStatus, Need, NeedExtra
-from .models import CapabilityStatus, Capability
-# !!! Import also CapabilityExtra, Task !!! Once they are implemented.
+from .models import CapabilityStatus, Capability, CapabilityExtra
+from .models import TaskStatus, Task
 
 ########################################################################
 ###                             Queries                              ###
@@ -69,6 +69,20 @@ class CapabilityType(DjangoObjectType):
     class Meta:
         model = Capability
 
+class CapabilityExtraType(DjangoObjectType):
+    class Meta:
+        model = CapabilityExtra
+
+####################################
+
+class TaskStatusType(DjangoObjectType):
+    class Meta:
+        model = TaskStatus
+
+class Task1Type(DjangoObjectType):
+    class Meta:
+        model = Task
+
 
 ########################################################################
 
@@ -101,6 +115,13 @@ class Query(object):
     all_capabilitystatuss = graphene.List(CapabilityStatusType)
     capability = graphene.Field(CapabilityType, id_capability=graphene.Int())
     all_capabilitys = graphene.List(CapabilityType)
+    capabilityextra = graphene.Field(CapabilityExtraType, id=graphene.Int())
+    all_capabilityextras = graphene.List(CapabilityExtraType)
+
+    taskstatus = graphene.Field(TaskStatusType, id=graphene.Int())
+    all_taskstatuss = graphene.List(TaskStatusType)
+    task = graphene.Field(Task1Type, id_task=graphene.Int())
+    all_tasks = graphene.List(Task1Type)
 
 
     def resolve_profilestatus(self, info, **kwargs):
@@ -176,11 +197,24 @@ class Query(object):
         return Capability.objects.get(id_capability=id_capability) if id_capability else None
     def resolve_all_capabilitys(self, info, **kwargs):
         return Capability.objects.all()
+    def resolve_capabilityextra(self, info, **kwargs):
+        id = kwargs.get('id')
+        return CapabilityExtra.objects.get(id=id) if id else None
+    def resolve_all_capabilityextras(self, info, **kwargs):
+        return CapabilityExtra.objects.all()
 
-#    def resolve_all_(self, info, **kwargs):
-#        return .objects.all()
-#    def resolve_all_(self, info, **kwargs):
-#        return .objects.all()
+    ################################
+
+    def resolve_taskstatus(self, info, **kwargs):
+        id = kwargs.get('id')
+        return TaskStatus.objects.get(id=id) if id else None
+    def resolve_all_taskstatuss(self, info, **kwargs):
+        return TaskStatus.objects.all()
+    def resolve_task(self, info, **kwargs):
+        id_task = kwargs.get('id_task')
+        return Task.objects.get(id_task=id_task) if id_task else None
+    def resolve_all_tasks(self, info, **kwargs):
+        return Task.objects.all()
 
 ########################################################################
 ###                            Mutations                             ###
