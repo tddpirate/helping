@@ -82,5 +82,33 @@
   "fields": {
     "status": "busy"
   }
+},
+{
+  "model": "tagiot.taskstatus",
+  "pk": 1,
+  "fields": {
+    "status": "capableflashed"
+  }
+},
+{
+  "model": "tagiot.taskstatus",
+  "pk": 2,
+  "fields": {
+    "status": "needyflashed"
+  }
+},
+{
+  "model": "tagiot.taskstatus",
+  "pk": 3,
+  "fields": {
+    "status": "matched"
+  }
+},
+{
+  "model": "tagiot.taskstatus",
+  "pk": 4,
+  "fields": {
+    "status": "finished"
+  }
 }
 ]
