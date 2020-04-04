@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'graphene_django',
 ]
 
 MIDDLEWARE = [
@@ -120,3 +121,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+########################################################################
+# Custom settings
+########################################################################
+
+GRAPHENE = {
+    'SCHEMA': 'helping.schema.schema'
+}
+
+########################################################################
+# End of settings.py
