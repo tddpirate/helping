@@ -12,12 +12,12 @@ Helping businesses find volunteers and contractors for small tasks.
 * Your PC work
   * Ensure that `git` is installed in your PC.
   * `mkdir` a directory where you'll work and `cd` to it.
-  * Clone the repository in your account into your PC: `git clone git@github.com:youruser/helping.git` where youruser is your GitHub username.
+  * Clone the repository in your account into your PC: `git clone git@github.com:youruser/helping.git` where `youruser` is your GitHub username.
   * Activate the virtualenv created above: `pyenv local 109project`
   * Install packages into the virtualenv: `pip install -r requirements.txt` - this will install Django, graphene_django (for GraphQL work) and several other packages.
   * Run the shell script: `./tools/clear_generated_files.sh`:
     * Select Yes to confirm both dialogs.
-	* When asked for password, it is the superuser (`admin`) password. You'll be prompted to enter it twice.
+	* When asked for password, it is the Django website superuser (`admin`) password. You'll be prompted to enter it twice.
   * The aforementioned script does the following:
     1. Prepares the database.
 	1. Moves your front-end files to a directory where they'll be found by the application.
