@@ -88,7 +88,7 @@ class Query(object):
     tasktype = graphene.Field(TaskTypeType, id_member=graphene.Int())
     all_tasktypes = graphene.List(TaskTypeType)
     tasktypeextra = graphene.Field(TaskTypeExtraType, id=graphene.Int())
-    all_tasktypeextras = graphene.List(TaskTypeExtraType)
+    all_tasktypeextras = graphene.List(TaskTypeExtraType, fldname=graphene.String())
 
     needstatus = graphene.Field(NeedStatusType, id=graphene.Int())
     all_needstatuss = graphene.List(NeedStatusType)
@@ -143,7 +143,8 @@ class Query(object):
         id = kwargs.get('id')
         return TaskTypeExtra.objects.get(id=id) if id else None
     def resolve_all_tasktypeextras(self, info, **kwargs):
-        return TaskTypeExtra.objects.all()
+        fldname = kwargs.get('fldname')
+        return TaskTypeExtra.objects.filter(fldname=fldname) if fldname else TaskTypeExtra.objects.all()
 
     ################################
 
