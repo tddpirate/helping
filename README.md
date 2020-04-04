@@ -17,21 +17,30 @@ Helping businesses find volunteers and contractors for small tasks.
   * Install packages into the virtualenv: `pip install -r requirements.txt` - this will install Django, graphene_django (for GraphQL work) and several other packages.
   * Run the shell script: `./tools/clear_generated_files.sh`:
     * Select Yes to confirm both dialogs.
+	* You will be asked to enter an E-mail address.
 	* When asked for password, it is the Django website superuser (`admin`) password. You'll be prompted to enter it twice.
   * The aforementioned script does the following:
     1. Prepares the database.
 	1. Moves your front-end files to a directory where they'll be found by the application.
-	1. Creates the superuser.
+	1. Creates the Django website superuser.
 * Now you are ready to play with the application.
   * `cd ./helping`
   * Activate the Django test webserver: `./manage.py runserver 0.0.0.0:8000`
-  * Now you can play with the application by browsing [http://localhost:8000/static/tagiot/index.html]. If you browse from another PC, replace `localhost` by the IP address of the PC hosting the application files.
+  * Now you can play with the application by browsing [http://localhost:8000/static/tagiot/index.html](http://localhost:8000/static/tagiot/index.html). If you browse from another PC, replace `localhost` by the IP address of the PC hosting the application files.
 * How to modify the application
   * Stop the Django test webserver by hitting Ctrl-C.
   * The editable front-end files are in `./helping/tagiot/static/tagiot`.
   * After editing them:
     * run `./manage.py collectstatic` (it is one of the commands in `./tools/clear_generated_files.sh`).
 	* restart the Django test webserver: `./manage.py runserver 0.0.0.0:8000`
+
+## Special URLs
+
+The following URLs are helpful for developing the application.
+
+* Activate the Front-End application: [http://localhost:8000/static/tagiot/index.html](http://localhost:8000/static/tagiot/index.html)
+* Activate the Admin module of the Back-End: [http://localhost:8000/admin](http://localhost:8000/admin) - useful for entering data into the database.
+* Activate the interactive GraphiQL Viewer: [http://localhost:8000/graphql](http://localhost:8000/graphql) - useful for testing GraphQL queries and mutations.
 
 ## Good luck!
 Of course, if you want your changes to be incorporated into the [tddpirate/helping](https://github.com/tddpirate/helping) repository, send a [pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests).
