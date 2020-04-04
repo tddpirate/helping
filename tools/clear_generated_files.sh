@@ -49,6 +49,22 @@ cd helping
 ./manage.py collectstatic
 ./manage.py createsuperuser --username admin --email w1@zak.co.il
 echo; echo
+echo Finished regenerating files.
+
+echo; echo
+whiptail --title "Confirmation" --yesno "Do you really want to populate database from fixtures?" 9 70
+check_if_to_terminate $?
+
+echo Going to populate database from fixtures
+echo; echo
+cd $MYDIR
+cd helping
+ls -al tagiot/fixtures/*.json
+./manage.py loaddata tagiot/fixtures/*.json
+echo; echo
+echo Finished populating database.
+
+echo; echo
 echo Finished regenerating everything
 
 echo; echo

@@ -1,0 +1,92 @@
+[
+{
+  "model": "tagiot.tasktype",
+  "pk": 1,
+  "fields": {
+    "tagmajor": "Accessibility Facilitator",
+    "tagminor": "Transcribe",
+    "description": "Textual transcription of meetings and lectures to make them accessible to the deaf."
+  }
+},
+{
+  "model": "tagiot.tasktype",
+  "pk": 2,
+  "fields": {
+    "tagmajor": "Technology",
+    "tagminor": "Project Management",
+    "description": ""
+  }
+},
+{
+  "model": "tagiot.tasktype",
+  "pk": 3,
+  "fields": {
+    "tagmajor": "Technology",
+    "tagminor": "Robotics",
+    "description": ""
+  }
+},
+{
+  "model": "tagiot.tasktype",
+  "pk": 4,
+  "fields": {
+    "tagmajor": "Small Business",
+    "tagminor": "Build Website",
+    "description": ""
+  }
+},
+{
+  "model": "tagiot.tasktype",
+  "pk": 5,
+  "fields": {
+    "tagmajor": "Small Business",
+    "tagminor": "Internet Marketing",
+    "description": ""
+  }
+},
+{
+  "model": "tagiot.tasktypeextra",
+  "pk": 1,
+  "fields": {
+    "tasktype": 1,
+    "fldname": "language",
+    "mandatory": true
+  }
+},
+{
+  "model": "tagiot.tasktypeextra",
+  "pk": 2,
+  "fields": {
+    "tasktype": 4,
+    "fldname": "language",
+    "mandatory": false
+  }
+},
+{
+  "model": "tagiot.tasktypeextra",
+  "pk": 3,
+  "fields": {
+    "tasktype": 5,
+    "fldname": "language",
+    "mandatory": true
+  }
+},
+{
+  "model": "tagiot.tasktypeextra",
+  "pk": 4,
+  "fields": {
+    "tasktype": 5,
+    "fldname": "country",
+    "mandatory": true
+  }
+},
+{
+  "model": "tagiot.tasktypeextra",
+  "pk": 5,
+  "fields": {
+    "tasktype": 5,
+    "fldname": "city",
+    "mandatory": false
+  }
+}
+]

@@ -1,0 +1,86 @@
+[
+{
+  "model": "tagiot.profilestatus",
+  "pk": 1,
+  "fields": {
+    "status": "free"
+  }
+},
+{
+  "model": "tagiot.profilestatus",
+  "pk": 2,
+  "fields": {
+    "status": "busy"
+  }
+},
+{
+  "model": "tagiot.contacttype",
+  "pk": 1,
+  "fields": {
+    "ct_name": "mobile"
+  }
+},
+{
+  "model": "tagiot.contacttype",
+  "pk": 2,
+  "fields": {
+    "ct_name": "email"
+  }
+},
+{
+  "model": "tagiot.contacttype",
+  "pk": 3,
+  "fields": {
+    "ct_name": "address"
+  }
+},
+{
+  "model": "tagiot.contacttype",
+  "pk": 4,
+  "fields": {
+    "ct_name": "linkedin"
+  }
+},
+{
+  "model": "tagiot.contacttype",
+  "pk": 5,
+  "fields": {
+    "ct_name": "facebook"
+  }
+},
+{
+  "model": "tagiot.contacttype",
+  "pk": 6,
+  "fields": {
+    "ct_name": "website"
+  }
+},
+{
+  "model": "tagiot.needstatus",
+  "pk": 1,
+  "fields": {
+    "status": "found"
+  }
+},
+{
+  "model": "tagiot.needstatus",
+  "pk": 2,
+  "fields": {
+    "status": "open"
+  }
+},
+{
+  "model": "tagiot.capabilitystatus",
+  "pk": 1,
+  "fields": {
+    "status": "free"
+  }
+},
+{
+  "model": "tagiot.capabilitystatus",
+  "pk": 2,
+  "fields": {
+    "status": "busy"
+  }
+}
+]
