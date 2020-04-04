@@ -1,30 +1,30 @@
 
 [
     {
-        "User_name": "בית מאפה נומילי",
+        "User_name": "Restorant Nomili",
         "Location_details": {
-            "City":"הוד השרון",
-            "Neighbor" : "הבנים",
+            "City":"Hod Hasharon",
+            "Neighbor" : "Habanim",
             "Country": "IL"
         },
         "Compatible_tags": [ 
         {
-            "Description": "ניהול כלכלי",
-        "More_details":null
+            "tagminor": "Transcribe",
+           "More_details":null
         }
      ]        
     },
     {
-        "User_name": "שווארמת החתוליה",
+        "User_name": "ShishKabab Cats",
         "Location_details": {
-            "City":"תל אביב",
-            "Neighbor" : "עתידים",
+            "City":"Tel Aviv",
+            "Neighbor" : "Atidm",
             "Country": "IL"
         },
         "Compatible_tags": [ 
         {
-            "Description": "שווח באינטרנט",
-        "More_details":null
+          "tagminor": "Build Website",
+          "More_details":null
         }
      ]        
     }

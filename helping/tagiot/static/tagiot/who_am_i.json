@@ -8,29 +8,15 @@
         "Mail": "never@real.mail.demo"
     },
     "Tags_list":[ 
-        {
-            "Description": "יועץ כלכלי",
-            "Need_lang": true,
-            "Need_location": false,
-            "Need_country": true,
-            "More_details":null
-        },        
-        {
-            "Description": "עזרה פיזית",
-            "Need_lang": true,
-            "Need_location": true,
-            "Need_country": true,
-            "More_details":null
-        },        
-        {
-            "Description": "משלוח חד פעמי",
-            "Need_lang": false,
-            "Need_location": true,
-            "Need_country": true,
-            "More_details":{
-                "כתובת יעד": "הפלדה 22, קרית הממשלה"
+     {
+        "tagminor": "Transcribe",
+        "tasktypeextraSet": [
+            {
+                "fldname": "language",
+                "mandatory": true
             }
-        }
+        ]
+    }
     ],
     "Languages":[ "hebrew", "russian" ],
     "Location_details": {

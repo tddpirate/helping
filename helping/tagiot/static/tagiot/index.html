@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf8">
-        <title> Hackorona </title>
+        <title>Y Hackorona </title>
         
         <style type="text/css">
             /*body { background-image:url("bg-logo.png"); }*/
@@ -64,7 +64,7 @@
                     "Neighborhood:":"שכונה:",
                     "Country:":"מדינה:",
                     "Save":"שמור",
-                    "Description":"תיאור",
+                    "tagminor":"תיאור",
                     "Check Contact":"סמן התאמה",
                     "Tags":"תגיות",
                     "rtl":"rtl",
@@ -83,7 +83,7 @@
                     "User type:":"User type:",
                     "-":"-",
                     "needy":"needy",
-                    "helper":"helper",
+		    "helper":"helper",
                     "Tag List:":"Tag List:",
                     "languages":"languages",
                     "Connection details":"Connection details",
@@ -94,7 +94,7 @@
                     "Neighborhood:":"Neighborhood:",
                     "Country:":"Country:",
                     "Save":"Save",
-                    "Description":"Description",
+                    "tagminor":"Description",
                     "Tags":"Tags",
                     "rtl":"ltr",
                     " Show Matches ":" Show Matches ",
@@ -123,7 +123,11 @@
             //replace with right access points
             var accessPoints = {
                 "who_am_i" : "who_am_i.json",
-                "get_tags_list":"get_tags_list.json",
+                "get_tags_list_GRAPHQL": {
+		    "query": "query tagslist { allTasktypes { tagminor tasktypeextraSet { fldname mandatory }}}",
+		    "variables": null,
+		    "operationName": "tagslist"
+		},
                 "saveUser": "saveUser.json",
                 "get_matches":"matches.json"
             }
@@ -142,6 +146,7 @@
                 
                 
                 divEditUserDetails.appendChild (new I_Am());
+		console.log("!!!!! will invoke HandleTags()");
                 HandleTags();
             }
             
@@ -171,11 +176,12 @@
                 _http_request.onreadystatechange = HandleAnswer;
                 var send = this.Send = function(url, data) {
                     var postVars = null;
-                    postVars = JSON.stringify(data);
+		    postVars = JSON.stringify(data);
 
                     _http_request.open("POST", url, true);
                     _http_request.setRequestHeader("Content-type", "application/json");
-                    _http_request.send('data=' + postVars);
+		    console.log(postVars);
+                    _http_request.send(postVars);
                 };
                 
             }
@@ -247,6 +253,8 @@
                     ul = bgDiv.appendChild(document.createElement("ul"));
                     li = null;
                     checkbox = null;
+
+		    //languages 
                     for (i=0; i < lang_list.length; i++) {
                         li = ul.appendChild( document.createElement("li"));
                         li.innerHTML = lang_list[i];
@@ -361,12 +369,14 @@
                 
                 // OMER handling to get_tags_list
                 function GotData(data) {
-                    tags_list = JSON.parse (data);
+		    data =  (JSON.parse (data)).data.allTasktypes;
+                    tags_list = data;
                     PopulateUserTags();
                 }
             
-                // OMER calling to accessPoints.get_tags_list
-                new HTTPhandler(GotData, FailData).Send (accessPoints.get_tags_list, null);
+                // OMER calling to accessPoints.get_tags_list - was converted into GraphQL query.
+                //new HTTPhandler(GotData, FailData).Send (accessPoints.get_tags_list, null);
+		new HTTPhandler(GotData, FailData).Send ('/graphql', accessPoints.get_tags_list_GRAPHQL);
                 
             }
             
@@ -389,7 +399,7 @@
                     var tbody = table.appendChild(document.createElement("tbody"));
                     var tr = thead.appendChild(document.createElement("tr"));
                     tr.appendChild(document.createElement("th")).innerHTML = "#";
-                    tr.appendChild(document.createElement("th")).innerHTML = i18n.GetText("Description");
+                    tr.appendChild(document.createElement("th")).innerHTML = i18n.GetText("tagminor");
                     tr.appendChild(document.createElement("th")).innerHTML = i18n.GetText("Tags");
                     tr.appendChild(document.createElement("th")).innerHTML = i18n.GetText("Check Contact");
                     
@@ -398,9 +408,11 @@
                         tr.appendChild(document.createElement("th")).innerHTML = (i+1);
                         tr.appendChild(document.createElement("td")).innerHTML = matches[i].User_name;
                         tempString = "";
+
                         for (var j = 0; j < matches[i].Compatible_tags.length ; j++) {
-                            tempString += matches[i].Compatible_tags[j].Description + " , ";
+                            tempString += matches[i].Compatible_tags[j].tagminor + " , ";
                         }
+
                         tr.appendChild(document.createElement("td")).innerHTML = tempString;
                         input = (tr.appendChild(document.createElement("th"))).appendChild(document.createElement("input"));
                         input.type = "checkbox";
@@ -434,7 +446,7 @@
                 params.User_id = user_details.user_id;
                 params.Tags = [];
                 for (i=0; i < user_details.Tags_list.length; i++) {
-                    params.Tags.push (user_details.Tags_list[i].Description);
+                    params.Tags.push (user_details.Tags_list[i].tagminor);
                 }
                 
                 // OMER calling to accessPoints.get_matches
@@ -460,12 +472,12 @@
                 if (tags_list) {
                     for (i=0; i < tags_list.length; i++) {
                         li = ul.appendChild(document.createElement("li"));
-                        li.innerHTML = tags_list[i].Description;
+                        li.innerHTML = tags_list[i].tagminor;
                         
                         (checkbox = li.appendChild(document.createElement("input"))).type = "checkbox";
-                        checkbox.value = tags_list[i].Description;
+                        checkbox.value = tags_list[i].tagminor;
                         for (j = 0; j < user_details.Tags_list.length; j++) {
-                            if (user_details.Tags_list[j].Description == tags_list[i].Description) {
+                            if (user_details.Tags_list[j].tagminor == tags_list[i].tagminor) {
                                 checkbox.checked = true;
                             }
                         }
@@ -473,7 +485,7 @@
                             var i = 0;
                             if (this.checked) { // add
                                 for (i=0; i < tags_list.length; i++) {
-                                    if (tags_list[i].Description == this.value) {
+                                    if (tags_list[i].tagminor == this.value) {
                                         user_details.Tags_list.push (tags_list[i]);
                                         break;
                                     }
@@ -481,7 +493,7 @@
                             } else { // remove 
                                 var new_Array = [];
                                 for (i=0; i < user_details.Tags_list.length; i++) {
-                                    if (user_details.Tags_list[i].Description != this.value) {
+                                    if (user_details.Tags_list[i].tagminor != this.value) {
                                         new_Array.push (user_details.Tags_list[i]);
                                     }
                                 }
