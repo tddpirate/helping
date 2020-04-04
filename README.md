@@ -19,10 +19,12 @@ Helping businesses find volunteers and contractors for small tasks.
     * Select Yes to confirm both dialogs.
 	* You will be asked to enter an E-mail address.
 	* When asked for password, it is the Django website superuser (`admin`) password. You'll be prompted to enter it twice.
+	* Then you'll be asked to confirm yet another dialog (it populates the database with some initial values).
   * The aforementioned script does the following:
     1. Prepares the database.
 	1. Moves your front-end files to a directory where they'll be found by the application.
 	1. Creates the Django website superuser.
+	1. Populates the database with some initial values.
 * Now you are ready to play with the application.
   * `cd ./helping`
   * Activate the Django test webserver: `./manage.py runserver 0.0.0.0:8000`
