@@ -49,7 +49,11 @@ class ProfileStatus(models.Model):
 class Profile(models.Model):
     id_member = models.AutoField("member id", primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    language = models.CharField("language", max_length=5, default="en")
+    language = models.CharField("language", max_length=5, default="en",
+                                choices=[('en', 'English'),('he','Hebrew')])
+    usertype = models.CharField("user type", max_length=1, default="V",
+                                choices=[('V','Volunteer'),('B','Business')])
+    # TODO: in a refactoring, move language,usertype to a cookie.
     bio = models.TextField(max_length=500, blank=True)
     pstatus = models.ForeignKey(ProfileStatus, on_delete=models.CASCADE)
     # Contact      # 1:N relation to contact information
