@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf8">
-        <title>Y Together 0.0.1 </title>
+        <title> Together 0.0.2 </title>
         
         <style type="text/css">
             /*body { background-image:url("bg-logo.png"); }*/
@@ -70,6 +70,11 @@
                     "Check Contact":"סמן התאמה",
                     "Tags":"תגיות",
                     "rtl":"rtl",
+                    "V":"מתנדב",
+                    "B":"עסק",
+                    "mobile":"נייד",
+                    "email":"דואל",
+                    "address":"address",
                     " Show Matches ":" הצג התאמות ",
                     " Acknoledge Mathces ":" אשר התאמות ",
                     " Matches ":" התאמות "                
@@ -100,6 +105,11 @@
                     "Tags":"Tags",
                     "rtl":"ltr",
                     " Show Matches ":" Show Matches ",
+                    "V":"Volunteer",
+                    "B":"Business",
+                    "mobile":"mobile",
+                    "email":"email",
+                    "address":"address",
                     " Acknoledge Mathces ":" Acknoledge Mathces ",
                     "Check Contact":"Check Contact"
                 }
@@ -182,15 +192,8 @@
             
             function Init() {
             
-                /* next will set language and translation.  maybe good idea to run it after we know who is the user */
-                i18n.lang = "en"; // English
-                // i18n.lang = "he"; // Hebrew
-                rootContainer.dir = i18n.GetText("rtl");
-                i18n.Trans ("body");
-                
-                
                 divEditUserDetails.appendChild (new I_Am());
-		console.log("!!!!! will invoke HandleTags()");
+		//console.log("!!!!! will invoke HandleTags()");
                 HandleTags();
             }
             
@@ -224,7 +227,7 @@
 
                     _http_request.open("POST", url, true);
                     _http_request.setRequestHeader("Content-type", "application/json");
-		    console.log(postVars);
+		    //console.log(postVars);
                     _http_request.send(postVars);
                 };
                 
@@ -244,7 +247,7 @@
                 
                 // OMER handling to who_am_i
                 function GotData( data ) {
-                    divDebug.innerHTML = "who_am_i data:\n<pre>" + JSON.stringify(JSON.parse(data), false, 2) + "</pre>";
+                    //divDebug.innerHTML = "who_am_i data:\n<pre>" + JSON.stringify(JSON.parse(data), false, 2) + "</pre>";
                     var input = null;
                     var span = null;
                     var selectType = null;
@@ -257,7 +260,13 @@
                     var btnSave = null;
                 
                     user_details = JSON.parse (data).data.profile;
-                    field_user_name.innerHTML = user_details.User_name;
+//language
+                    i18n.lang = user_details.language ; 
+                    rootContainer.dir = i18n.GetText("rtl");
+                    i18n.Trans ("body");
+
+
+                    field_user_name.innerHTML = user_details.userUsername; //user_details.User_name;
                     bgDiv.innerHTML = "";
                     
                     span = bgDiv.appendChild(document.createElement("span"));
@@ -411,8 +420,8 @@
 		    // OMER !!! (I am volunteer looking for businesses) and
 		    // OMER !!! matched capabilities (I am business looking
 		    // OMER !!! for volunteers).
-                    matches = JSON.parse (data);
-		    divDebug.innerHTML = "get_matches data:\n<pre>" + JSON.stringify(matches, false, 2) + "</pre>";
+                    matches = JSON.parse (data).data.allNeeds;
+		    //divDebug.innerHTML = "get_matches data:\n<pre>" + JSON.stringify(matches, false, 2) + "</pre>";
 
                     var tempString = "";
                     var table = bgDiv.appendChild(document.createElement("table"));
@@ -427,14 +436,11 @@
                     tr.appendChild(document.createElement("th")).innerHTML = i18n.GetText("Check Contact");
                     
                     for (var i=0; i < matches.length; i++) {
-                        tr = thead.appendChild(document.createElement("tr"));
+                        tr = tbody.appendChild(document.createElement("tr"));
                         tr.appendChild(document.createElement("th")).innerHTML = (i+1);
-                        tr.appendChild(document.createElement("td")).innerHTML = matches[i].User_name;
+                        tr.appendChild(document.createElement("td")).innerHTML = matches[i].profile.userUsername;
                         tempString = "";
-
-                        for (var j = 0; j < matches[i].Compatible_tags.length ; j++) {
-                            tempString += matches[i].Compatible_tags[j].tagminor + " , ";
-                        }
+                        tempString = matches[i].tasktype.tagmajor;
 
                         tr.appendChild(document.createElement("td")).innerHTML = tempString;
                         input = (tr.appendChild(document.createElement("th"))).appendChild(document.createElement("input"));
@@ -559,7 +565,7 @@
                 }
                 var item = document.getElementById(item_id);
                 currentVisible = item;
-                console.log (this);
+                //console.log (this);
                 currentButton = document.getElementById(button_id);;
                 
                 currentButton.classList.add ("currentTab")
