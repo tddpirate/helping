@@ -157,7 +157,22 @@
 		    "operationName": "tagslist"
 		},
                 "saveUser": "saveUser.json",
-                "get_matches":"matches.json"
+                //"get_matches":"matches.json"
+		"get_matches_GRAPHQL":
+		        "     query matchingNeeds($tagmajor: String, $tagminor: String) {" +
+			"       allNeeds(tagmajor:$tagmajor, tagminor: $tagminor) {" +
+			"         profile { idMember userUsername }" +
+			"         tasktype { tagmajor tagminor }" +
+		        "       }" +
+		        "     }" +
+			"     query matchingCapabilities($tagmajor: String, $tagminor: String) {" +
+			"       allCapabilities(tagmajor: $tagmajor, tagminor: $tagminor) {" +
+			"         profile { idMember userUsername }" +
+			"         tasktype { tagmajor tagminor }" +
+		        "       }" +
+		        "     }"
+		    //"variables": { "tagmajor": null, "tagminor": null },
+		    //"operationName": "matchingNeeds" // or "matchingCapabilities"
             }
             
             var user_details = null;
@@ -418,7 +433,13 @@
                     
                 // Omer handling to get_matches
                 function GotData(data) {
+		    // OMER !!! Need different handling for matched needs
+		    // OMER !!! (I am volunteer looking for businesses) and
+		    // OMER !!! matched capabilities (I am business looking
+		    // OMER !!! for volunteers).
                     matches = JSON.parse (data);
+		    divDebug.innerHTML = "get_matches data:\n<pre>" + JSON.stringify(matches, false, 2) + "</pre>";
+
                     var tempString = "";
                     var table = bgDiv.appendChild(document.createElement("table"));
                     var input = null;
@@ -471,14 +492,26 @@
 }
                 
                 */
+		// OMER !!! need different parameters.
+		// OMER !!! You get the task tags (tagmajor and/or
+		// OMER !!! tagminor - the code knows to deal with either
+		// OMER !!! of them being null)
+		// OMER !!! from the need a business selects (to find who can help them)
+		// OMER !!! or the capability a volunteer selects (to find who needs him)
+		// OMER !!! Then you set them in the Dict of "variables" below.
                 params.User_id = user_details.user_id;
                 params.Tags = [];
                 for (i=0; i < user_details.Tags_list.length; i++) {
                     params.Tags.push (user_details.Tags_list[i].tagminor);
                 }
-                
+                // OMER !!! The following is in lieu of the above params code.
+		constructed_query = {
+		    "query": accessPoints.get_matches_GRAPHQL,
+		    "variables":  { "tagmajor": null, "tagminor": "Transcribe" },
+		    "operationName": "matchingNeeds"  // Set it to "matchingCapabilities" if you are a business rather than a volunteer.
+		};
                 // OMER calling to accessPoints.get_matches
-                new HTTPhandler(GotData, FailData).Send (accessPoints.get_matches, params);
+                new HTTPhandler(GotData, FailData).Send ('/graphql', constructed_query);
                 
                 return bgDiv;
             }

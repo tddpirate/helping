@@ -119,14 +119,14 @@ class Query(object):
     needstatus = graphene.Field(NeedStatusType, id=graphene.Int())
     all_needstatuss = graphene.List(NeedStatusType)
     need = graphene.Field(NeedType, id_need=graphene.Int())
-    all_needs = graphene.List(NeedType)
+    all_needs = graphene.List(NeedType, tagmajor=graphene.String(), tagminor=graphene.String())
     needextra = graphene.Field(NeedExtraType, id=graphene.Int())
     all_needextras = graphene.List(NeedExtraType)
 
     capabilitystatus = graphene.Field(CapabilityStatusType, id=graphene.Int())
     all_capabilitystatuss = graphene.List(CapabilityStatusType)
     capability = graphene.Field(CapabilityType, id_capability=graphene.Int())
-    all_capabilitys = graphene.List(CapabilityType)
+    all_capabilitys = graphene.List(CapabilityType, tagmajor=graphene.String(), tagminor=graphene.String())
     capabilityextra = graphene.Field(CapabilityExtraType, id=graphene.Int())
     all_capabilityextras = graphene.List(CapabilityExtraType)
 
@@ -198,7 +198,17 @@ class Query(object):
         id_need = kwargs.get('id_need')
         return Need.objects.get(id_need=id_need) if id_need else None
     def resolve_all_needs(self, info, **kwargs):
-        return Need.objects.all()
+        tagmajor = kwargs.get('tagmajor')
+        tagminor = kwargs.get('tagminor')
+        if (tagmajor or tagminor):
+            kw = {}   # Workaround to the problem of filter(arg=None) != filter()
+            if (tagmajor):
+                kw["tasktype__tagmajor"] = tagmajor
+            if (tagminor):
+                kw["tasktype__tagminor"] = tagminor
+            return Need.objects.filter(**kw)
+        else:
+            return Need.objects.all()
     def resolve_needextra(self, info, **kwargs):
         id = kwargs.get('id')
         return NeedExtra.objects.get(id=id) if id else None
@@ -216,7 +226,17 @@ class Query(object):
         id_capability = kwargs.get('id_capability')
         return Capability.objects.get(id_capability=id_capability) if id_capability else None
     def resolve_all_capabilitys(self, info, **kwargs):
-        return Capability.objects.all()
+        tagmajor = kwargs.get('tagmajor')
+        tagminor = kwargs.get('tagminor')
+        if (tagmajor or tagminor):
+            kw = {}   # Workaround to the problem of filter(arg=None) != filter()
+            if (tagmajor):
+                kw["tasktype__tagmajor"] = tagmajor
+            if (tagminor):
+                kw["tasktype__tagminor"] = tagminor
+            return Capability.objects.filter(**kw)
+        else:
+            return Capability.objects.all()
     def resolve_capabilityextra(self, info, **kwargs):
         id = kwargs.get('id')
         return CapabilityExtra.objects.get(id=id) if id else None
