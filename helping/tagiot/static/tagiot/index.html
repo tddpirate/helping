@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf8">
-        <title>Y Hackorona </title>
+        <title>Y Together 0.0.1 </title>
         
         <style type="text/css">
             /*body { background-image:url("bg-logo.png"); }*/
@@ -167,7 +167,7 @@
 		        "       }" +
 		        "     }" +
 			"     query matchingCapabilities($tagmajor: String, $tagminor: String) {" +
-			"       allCapabilities(tagmajor: $tagmajor, tagminor: $tagminor) {" +
+			"       allCapabilitys(tagmajor: $tagmajor, tagminor: $tagminor) {" +
 			"         profile { idMember userUsername }" +
 			"         tasktype { tagmajor tagminor }" +
 		        "       }" +
@@ -249,22 +249,22 @@
                     var span = null;
                     var selectType = null;
                     var option = null;
-                    var option_list = ["-", "needy" , "helper"];
+                    var option_list = ["-", "V" , "B"];
                     var ul = null;
                     var li = null;
                     var checkbox = null;
                     var i = 0;
                     var btnSave = null;
                 
-                    user_details = JSON.parse (data)
+                    user_details = JSON.parse (data).data.profile;
                     field_user_name.innerHTML = user_details.User_name;
                     bgDiv.innerHTML = "";
                     
                     span = bgDiv.appendChild(document.createElement("span"));
-                    span.innerHTML = i18n.GetText("User name:") + user_details.User_name;
+                    span.innerHTML = i18n.GetText("User name:") + user_details.userUsername;
                     bgDiv.appendChild(document.createElement("br"));
                     span = bgDiv.appendChild(document.createElement("span"));
-                    span.innerHTML = i18n.GetText("User ID:") + user_details.user_id;
+                    span.innerHTML = i18n.GetText("User ID:") + user_details.idMember;
                     bgDiv.appendChild(document.createElement("br"));
 
                     span = bgDiv.appendChild(document.createElement("span"));
@@ -275,7 +275,7 @@
                         option = selectType.appendChild(document.createElement("option"));
                         option.value = option_list[i];
                         option.innerHTML = i18n.GetText(option_list[i]);
-                        if (user_details.User_type == option_list[i]) {
+                        if (user_details.usertype == option_list[i]) {
                             selectType.selectedIndex = i;
                         }                        
                     }
@@ -291,6 +291,7 @@
                     ul.id = "ulUserTags";
                     PopulateUserTags();
                     
+                    /*
                     //bgDiv.appendChild(document.createElement("br"));
                     span = bgDiv.appendChild(document.createElement("span"));
                     span.innerHTML = i18n.GetText("languages");
@@ -299,6 +300,7 @@
                     checkbox = null;
 
 		    //languages 
+
                     for (i=0; i < lang_list.length; i++) {
                         li = ul.appendChild( document.createElement("li"));
                         li.innerHTML = lang_list[i];
@@ -321,56 +323,27 @@
                             }                            
                         }
                     }
-                    
+                    */
                     //bgDiv.appendChild(document.createElement("br"));
                     bgDiv.appendChild(document.createElement("h3")).innerHTML = i18n.GetText("Connection details");
-                    
-                    span = bgDiv.appendChild(document.createElement("span"));
-                    span.innerHTML = i18n.GetText("Phone:");
-                    input = span.appendChild(document.createElement("input"));
-                    input.value = user_details.Connection_details.Phone;
-                    input.onchange = function () {
-                        user_details.Connection_details.Phone = this.value;
-                    }
-                    bgDiv.appendChild(document.createElement("br"));
-                    
-                    span = bgDiv.appendChild(document.createElement("span"));
-                    span.innerHTML = i18n.GetText("email:");
-                    input = span.appendChild(document.createElement("input"));
-                    input.value = user_details.Connection_details.Mail;
-                    input.onchange = function () {
-                        user_details.Connection_details.Mail = this.value;
-                    }
-                    bgDiv.appendChild(document.createElement("br"));
-                    
-                    
-                    bgDiv.appendChild(document.createElement("h3")).innerHTML = i18n.GetText("Address");
-
-                    span = bgDiv.appendChild(document.createElement("span"));
-                    span.innerHTML = i18n.GetText("City:");
-                    input = span.appendChild(document.createElement("input"));
-                    input.value = user_details.Location_details.City;
-                    input.onchange = function () {
-                        user_details.Connection_details.City = this.value;
+                    //contactSet
+                    for (i=0; i < user_details.contactSet.length; i++) {
+                        span = bgDiv.appendChild(document.createElement("span"));
+                        span.innerHTML = i18n.GetText(user_details.contactSet[i].contactType.ctName);
+                        input = span.appendChild(document.createElement("input"));
+                        input.value = user_details.contactSet[i].contactData;
+                        input.data = user_details.contactSet[i].contactType.ctName;
+                        input.onchange = function () {
+                            for (var i=0; i < user_details.contactSet.length; i++) {
+                                if (user_details.contactSet[i].contactType.ctName == this.data) {
+                                     user_details.contactSet[i].contactData = this.value;
+                                     break;
+                                }
+                            }
+                        }
+                        bgDiv.appendChild(document.createElement("br"));
                     }
                     
-                    bgDiv.appendChild(document.createElement("br"));
-                    span = bgDiv.appendChild(document.createElement("span"));
-                    bgDiv.appendChild(document.createElement("br"));
-                    span.innerHTML = i18n.GetText("Neighborhood:");
-                    input = span.appendChild(document.createElement("input"));
-                    input.value = user_details.Location_details.Neighborhood;
-                    input.onchange = function () {
-                        user_details.Connection_details.Neighborhood = this.value;
-                    }
-                    
-                    span = bgDiv.appendChild(document.createElement("span"));
-                    span.innerHTML = i18n.GetText("Country:");
-                    input = span.appendChild(document.createElement("input"));
-                    input.value = user_details.Location_details.Country;
-                    input.onchange = function () {
-                        user_details.Connection_details.Country = this.value;
-                    }
                     
                     bgDiv.appendChild(document.createElement("br"));
                     
@@ -502,11 +475,12 @@
 		// OMER !!! Then you set them in the Dict of "variables" below.
                 params.User_id = user_details.user_id;
                 params.Tags = [];
-                for (i=0; i < user_details.Tags_list.length; i++) {
-                    params.Tags.push (user_details.Tags_list[i].tagminor);
+                for (i=0; i < user_details.needSet.length; i++) {
+                    params.Tags.push (user_details.needSet[i].tasktype.tagminor);
                 }
+
                 // OMER !!! The following is in lieu of the above params code.
-		constructed_query = {
+		var constructed_query = {
 		    "query": accessPoints.get_matches_GRAPHQL,
 		    "variables":  { "tagmajor": null, "tagminor": "Transcribe" },
 		    "operationName": "matchingNeeds"  // Set it to "matchingCapabilities" if you are a business rather than a volunteer.
@@ -538,8 +512,8 @@
                         
                         (checkbox = li.appendChild(document.createElement("input"))).type = "checkbox";
                         checkbox.value = tags_list[i].tagminor;
-                        for (j = 0; j < user_details.Tags_list.length; j++) {
-                            if (user_details.Tags_list[j].tagminor == tags_list[i].tagminor) {
+                        for (j = 0; j < user_details.needSet.length; j++) {
+                            if (user_details.needSet[j].tasktype.tagminor == tags_list[i].tagminor) {
                                 checkbox.checked = true;
                             }
                         }
@@ -548,18 +522,18 @@
                             if (this.checked) { // add
                                 for (i=0; i < tags_list.length; i++) {
                                     if (tags_list[i].tagminor == this.value) {
-                                        user_details.Tags_list.push (tags_list[i]);
+                                        user_details.needSet.push (tags_list[i]);
                                         break;
                                     }
                                 }
                             } else { // remove 
                                 var new_Array = [];
-                                for (i=0; i < user_details.Tags_list.length; i++) {
-                                    if (user_details.Tags_list[i].tagminor != this.value) {
+                                for (i=0; i < user_details.needSet.length; i++) {
+                                    if (user_details.needSet[i].tasktype.tagminor != this.value) {
                                         new_Array.push (user_details.Tags_list[i]);
                                     }
                                 }
-                                user_details.Tags_list = new_Array;                                
+                                user_details.needSet = new_Array;                                
                             }
                         }
                         
