@@ -181,9 +181,14 @@
 			"         profile { idMember userUsername }" +
 			"         tasktype { tagmajor tagminor }" +
 		        "       }" +
-		        "     }"
-		    //"variables": { "tagmajor": null, "tagminor": null },
-		    //"operationName": "matchingNeeds" // or "matchingCapabilities"
+		        "     }",
+		//"variables": { "tagmajor": null, "tagminor": null },
+		//"operationName": "matchingNeeds" // or "matchingCapabilities"
+		"get_contact_types_GRAPHQL": {
+		    "query": "query contacttypenames {  allContacttypes { ctName } }",
+		    "variables": null,
+		    "operationName": "contacttypenames"
+		}
             }
             
             var user_details = null;
