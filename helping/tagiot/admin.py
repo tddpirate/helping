@@ -46,7 +46,7 @@ class CapabilityExtraInline(admin.TabularInline):
 class ProfileAdmin(admin.ModelAdmin):
     list_display = [ 'id_member',
                      'get_user_first_name', 'get_user_last_name', 'get_user_username', 'get_user_email',
-                     'bio',
+                     'language', 'bio',
     ]
     readonly_fields=('id_member',
                      'get_user_first_name', 'get_user_last_name', 'get_user_username', 'get_user_email',
@@ -55,7 +55,7 @@ class ProfileAdmin(admin.ModelAdmin):
     ]
     fieldsets = [
         ('User', {'fields': ['get_user_first_name', 'get_user_last_name', 'get_user_username', 'get_user_email',]}),
-        ('Profile', {'fields': ['bio',]}),
+        ('Profile', {'fields': ['language', 'bio',]}),
     ]
     inlines = [ContactInline,]
     search_fields = ['=id_member',

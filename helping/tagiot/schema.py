@@ -103,8 +103,8 @@ class Query(object):
     all_profilestatuss = graphene.List(ProfileStatusType)
     #user = graphene.Field(UserType, id=graphene.Int())
     #all_users = graphene.List(UserType)
-    profile = graphene.Field(ProfileType, id_member=graphene.Int())
-    all_profiles = graphene.List(ProfileType)
+    profile = graphene.Field(ProfileType, id_member=graphene.Int(), user_username=graphene.String())
+    all_profiles = graphene.List(ProfileType, user_username=graphene.String())
 
     contacttype = graphene.Field(ContactTypeType, id=graphene.Int())
     all_contacttypes = graphene.List(ContactTypeType)
@@ -147,10 +147,18 @@ class Query(object):
     #def resolve_all_users(self, info, **kwargs):
     #    return User.objects.all()
     def resolve_profile(self, info, **kwargs):
-        id_member = kwargs.get('id_member')
-        return Profile.objects.get(id_member=id_member) if id_member else None
+        user_username = kwargs.get('user_username')
+        if user_username:
+            return Profile.objects.get(user__username=user_username)
+        else:
+            id_member = kwargs.get('id_member')
+            return Profile.objects.get(id_member=id_member) if id_member else None
     def resolve_all_profiles(self, info, **kwargs):
-        return Profile.objects.all()
+        user_username = kwargs.get('user_username')
+        if user_username:
+            return Profile.objects.filter(user__username=user_username)
+        else:
+            return Profile.objects.all()
 
     ################################
 

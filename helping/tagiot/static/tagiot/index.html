@@ -14,17 +14,19 @@
         
         <script type="text/javascript">
             "use strict";
-            
+          // OMER !!! Temporary: login workaround
+	  var current_user = window.prompt("Enter your username:","anonymous");
+	  
             
             // Tranlation handler 
             
             function I18N () {
-                this.lang = "EN"
+                this.lang = "en"
                 var _this = this;
                 var GetText = this.GetText = function (text) {
                     var lang = _this.lang;
                     if (!TransStr[lang]) {
-                        lang = "EN";
+                        lang = "en";
                     }
                     if (!TransStr[lang][text]) {
                         divDebug.innerHTML += '"'+text+'":"'+text+'",<br>';
@@ -43,7 +45,7 @@
                 }
                 
             var TransStr = {
-                "HE":{
+                "he":{
                     " Hello ": " שלום ",
                     " Edit user details ":" ערוך פרטי משתמש ",
                     " Show Match ":" הצג התאמות ",
@@ -72,7 +74,7 @@
                     " Acknoledge Mathces ":" אשר התאמות ",
                     " Matches ":" התאמות "                
                 },
-                "EN":{
+                "en":{
                     " Hello ":" Hello ",
                     " Edit user details ":" Edit user details ",
                     " Show Match ":" Show Match ",
@@ -122,7 +124,33 @@
             
             //replace with right access points
             var accessPoints = {
-                "who_am_i" : "who_am_i.json",
+                "who_am_i_GRAPHQL" : {
+		    "query": "query whoami($current_user: String) {" +
+			"       profile(userUsername: $current_user) {" +
+			"         userUsername" +
+			"         idMember" +
+			"         language" +
+			"         contactSet {" +
+			"           contactType { ctName }" +
+			"           contactData" +
+		        "         }" +
+			"         needSet {" +
+			"           tasktype {" +
+			"             tagmajor" +
+			"             tagminor" +
+			"           }" +
+			"         }" +
+			"         capabilitySet {" +
+			"           tasktype {" +
+			"             tagmajor" +
+			"             tagminor" +
+			"           }" +
+			"         }" +
+		        "       }" +
+			" }",
+		    "variables": { "current_user": current_user},
+		    "operationName": "whoami"
+		},
                 "get_tags_list_GRAPHQL": {
 		    "query": "query tagslist { allTasktypes { tagminor tasktypeextraSet { fldname mandatory }}}",
 		    "variables": null,
@@ -139,8 +167,8 @@
             function Init() {
             
                 /* next will set language and translation.  maybe good idea to run it after we know who is the user */
-                i18n.lang = "EN"; // English
-                // i18n.lang = "HE"; // Hebrew
+                i18n.lang = "en"; // English
+                // i18n.lang = "he"; // Hebrew
                 rootContainer.dir = i18n.GetText("rtl");
                 i18n.Trans ("body");
                 
@@ -200,7 +228,7 @@
                 
                 // OMER handling to who_am_i
                 function GotData( data ) {
-                
+                    divDebug.innerHTML = "who_am_i data:\n<pre>" + JSON.stringify(JSON.parse(data), false, 2) + "</pre>";
                     var input = null;
                     var span = null;
                     var selectType = null;
@@ -353,7 +381,7 @@
                 }
                 
                 // OMER calling to accessPoints.who_am_i
-                new HTTPhandler(GotData, FailData).Send (accessPoints.who_am_i, null);
+                new HTTPhandler(GotData, FailData).Send ('/graphql', accessPoints.who_am_i_GRAPHQL);
                 
                 return bgDiv;
             }
